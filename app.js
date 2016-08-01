@@ -1,4 +1,5 @@
 var express = require('express');
+var http = require('http');
 var session = require('express-session');
 var path = require('path');
 var favicon = require('serve-favicon');
@@ -16,12 +17,11 @@ var users = require('./routes/users');
 
 var app = express();
 
-// view engine setup
 app.engine('ejs', require('ejs-locals'));
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
-// uncomment after placing your favicon in /public
+
 app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(logger('dev'));
 app.use(bodyParser.json());
@@ -36,16 +36,12 @@ app.use(session({
   store: new MongoStore({mongooseConnection: mongoose.connection})
 }));
 
-app.use(function(req, res, next){
-  req.session.numberOfVisits = req.session.numberOfVisits + 1 || 1;
-  res.send("Visits: " + req.session.numberOfVisits);
-})
+app.use(require('./middleware/loadUser'));
 
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(require('./middleware/sendHttpError'))
 
 app.use('/', routes);
-app.use('/users', users);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -76,5 +72,7 @@ app.use(function(err, req, res, next) {
   } 
 });
 
-
-module.exports = app;
+http.createServer(app).listen(config.get('port'), function(){
+  console.log('Express server listening on port ' + config.get('port'));
+});
+//module.exports = app;
