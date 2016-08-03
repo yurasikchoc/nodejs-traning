@@ -12,7 +12,7 @@
 	},
 	"session": {
 		"secret": "tralalalala",
-		"key": "sid",
+		"key": "connect.sid",
 		"cookie": {
 			"path" : "/",
 			"httpOnly": true,

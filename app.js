@@ -28,12 +28,13 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 
-var MongoStore = require('connect-mongo')(session);
+
+var sessionStore = require('./lib/sessionStore')
 app.use(session({
   secret: config.get('session:secret'),
   key: config.get('session:sid'),
   cookie: config.get('session:cookie'),
-  store: new MongoStore({mongooseConnection: mongoose.connection})
+  store: sessionStore
 }));
 
 app.use(require('./middleware/loadUser'));
@@ -72,7 +73,11 @@ app.use(function(err, req, res, next) {
   } 
 });
 
-http.createServer(app).listen(config.get('port'), function(){
+var server = http.createServer(app);
+server.listen(config.get('port'), function(){
   console.log('Express server listening on port ' + config.get('port'));
 });
+
+var io = require('./socket')(server);
+app.set('io', io);
 //module.exports = app;
