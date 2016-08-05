@@ -1,6 +1,5 @@
 var express = require('express');
 var http = require('http');
-var session = require('express-session');
 var path = require('path');
 var favicon = require('serve-favicon');
 var logger = require('morgan');
@@ -28,14 +27,14 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 
-
 var sessionStore = require('./lib/sessionStore')
-app.use(session({
+var session = require('express-session')({
   secret: config.get('session:secret'),
   key: config.get('session:sid'),
   cookie: config.get('session:cookie'),
   store: sessionStore
-}));
+});
+app.use(session);
 
 app.use(require('./middleware/loadUser'));
 
@@ -78,6 +77,6 @@ server.listen(config.get('port'), function(){
   console.log('Express server listening on port ' + config.get('port'));
 });
 
-var io = require('./socket')(server);
+var io = require('./socket')(server, session);
 app.set('io', io);
 //module.exports = app;

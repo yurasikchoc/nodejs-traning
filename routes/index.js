@@ -8,6 +8,6 @@ router.post('/login', require('./login').post);
 router.post('/logout', require('./logout').post);
 
 router.get('/chat', checkAuth, require('./chat').get);
-//router.get('/', require('./frontpage').get);
+router.get('/', require('./frontpage').get);
 
 module.exports = router
