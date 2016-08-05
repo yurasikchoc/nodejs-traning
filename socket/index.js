@@ -107,7 +107,7 @@ module.exports = function(server) {
 
   io.sockets.on('connection', function(socket) {
 
-    var username = socket.handshake.user.get('username');
+    var username = 'aa'//socket.handshake.user.get('username');
 
     socket.broadcast.emit('join', username);
 
